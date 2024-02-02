@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PreviousSchedulesDto {
-    private UUID loanAssetId;
+    private Long loanAssetId;
     private BigDecimal costAmount;
     private BigDecimal depositAmount;
     private BigDecimal yearInterestRate;
@@ -14,7 +14,11 @@ public class PreviousSchedulesDto {
     private BigDecimal totalInterestDue;
     private BigDecimal totalPaymentDue;
 
-    public PreviousSchedulesDto(UUID loanAssetId, BigDecimal costAmount, BigDecimal depositAmount, BigDecimal yearInterestRate, int numberOfMonthlyPayments, BigDecimal balloonAmount, BigDecimal calculatedRepaymentAmount, BigDecimal totalInterestDue, BigDecimal totalPaymentDue) {
+    public PreviousSchedulesDto() {
+
+    }
+
+    public PreviousSchedulesDto(Long loanAssetId, BigDecimal costAmount, BigDecimal depositAmount, BigDecimal yearInterestRate, int numberOfMonthlyPayments, BigDecimal balloonAmount, BigDecimal calculatedRepaymentAmount, BigDecimal totalInterestDue, BigDecimal totalPaymentDue) {
         this.loanAssetId = loanAssetId;
         this.costAmount = costAmount;
         this.depositAmount = depositAmount;
@@ -26,11 +30,11 @@ public class PreviousSchedulesDto {
         this.totalPaymentDue = totalPaymentDue;
     }
 
-    public UUID getLoanAssetId() {
+    public Long getLoanAssetId() {
         return loanAssetId;
     }
 
-    public void setLoanAssetId(UUID loanAssetId) {
+    public void setLoanAssetId(Long loanAssetId) {
         this.loanAssetId = loanAssetId;
     }
 

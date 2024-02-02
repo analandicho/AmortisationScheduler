@@ -12,12 +12,12 @@ import java.util.List;
 public class LoanCalculator {
     public BigDecimal getMonthlyRepaymentAmountWithoutBalloon(BigDecimal financedAmount, BigDecimal rate, int termInMonths) {
         return financedAmount.multiply((rate.multiply(BigDecimal.ONE.add(rate).pow(termInMonths)))
-                .divide(BigDecimal.ONE.add(rate).pow(termInMonths).subtract(BigDecimal.ONE), 5, RoundingMode.HALF_EVEN));
+                .divide(BigDecimal.ONE.add(rate).pow(termInMonths).subtract(BigDecimal.ONE), 7, RoundingMode.HALF_EVEN));
     }
 
     public BigDecimal getMonthlyRepaymentAmountWithBalloon(BigDecimal financedAmount, BigDecimal rate, int termInMonths, BigDecimal balloonAmount) {
-        BigDecimal leftSide = financedAmount.subtract(balloonAmount.divide(BigDecimal.ONE.add(rate).pow(termInMonths), 6, RoundingMode.HALF_EVEN));
-        BigDecimal rightSide = rate.divide(BigDecimal.ONE.subtract(BigDecimal.ONE.add(rate).pow(-termInMonths, MathContext.DECIMAL32)), 6, RoundingMode.HALF_EVEN);
+        BigDecimal leftSide = financedAmount.subtract(balloonAmount.divide(BigDecimal.ONE.add(rate).pow(termInMonths), 7, RoundingMode.HALF_EVEN));
+        BigDecimal rightSide = rate.divide(BigDecimal.ONE.subtract(BigDecimal.ONE.add(rate).pow(-termInMonths, MathContext.DECIMAL32)), 7, RoundingMode.HALF_EVEN);
 
         return leftSide.multiply(rightSide);
     }

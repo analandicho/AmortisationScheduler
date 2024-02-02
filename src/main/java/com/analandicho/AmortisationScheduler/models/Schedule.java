@@ -10,8 +10,8 @@ import java.util.UUID;
 public class Schedule {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private int period;
 
@@ -22,7 +22,8 @@ public class Schedule {
 
     private BigDecimal balance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="LOAN_ASSET_ID")
     private LoanAsset loanAsset;
 
@@ -30,7 +31,7 @@ public class Schedule {
 
 
     public Schedule(int period, BigDecimal payment, BigDecimal principal, BigDecimal interest, BigDecimal balance, LoanAsset loanAsset) {
-        this.id = UUID.randomUUID();
+//        this.id = UUID.randomUUID();
         this.period = period;
         this.payment = payment;
         this.principal = principal;
@@ -39,13 +40,13 @@ public class Schedule {
         this.loanAsset = loanAsset;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public int getPeriod() {
         return period;

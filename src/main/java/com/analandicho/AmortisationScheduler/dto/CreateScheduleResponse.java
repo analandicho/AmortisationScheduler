@@ -4,20 +4,20 @@ import java.util.UUID;
 
 public class CreateScheduleResponse {
 
-    private UUID assetId;
+    private Long assetId;
     private String statusMessage;
 
-    public CreateScheduleResponse(UUID assetId) {
+    public CreateScheduleResponse(Long assetId) {
         this.assetId = assetId;
         this.statusMessage = "Schedule creation is successful";
 
     }
 
-    public UUID getAssetId() {
+    public Long getAssetId() {
         return assetId;
     }
 
-    public void setAssetId(UUID assetId) {
+    public void setAssetId(Long assetId) {
         this.assetId = assetId;
     }
 

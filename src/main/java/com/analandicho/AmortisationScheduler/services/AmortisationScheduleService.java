@@ -23,10 +23,16 @@ public class AmortisationScheduleService {
 
     public CreateScheduleResponse createScheduleForLoan(LoanAssetRequest loanDTO) throws Exception {
         LoanCalculator loanCalculator = new LoanCalculator();
-        BigDecimal financedAmount = loanDTO.getCostAmount().subtract(loanDTO.getDepositAmount());
-        BigDecimal rate = loanDTO.getYearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
-        int termInMonths = loanDTO.getNumberOfMonthlyPayments();
-        BigDecimal balloonAmount = loanDTO.getBalloonAmount();
+
+//        BigDecimal financedAmount = loanDTO.getCostAmount().subtract(loanDTO.getDepositAmount());
+//        BigDecimal rate = loanDTO.getYearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
+//        int termInMonths = loanDTO.getNumberOfMonthlyPayments();
+//        BigDecimal balloonAmount = loanDTO.getBalloonAmount();
+
+        BigDecimal financedAmount = loanDTO.costAmount().subtract(loanDTO.depositAmount());
+        BigDecimal rate = loanDTO.yearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
+        int termInMonths = loanDTO.numberOfMonthlyPayments();
+        BigDecimal balloonAmount = loanDTO.balloonAmount();
 
         // TODO: check for values; Do we also check if Loan Asset Amount is 0 ???
         if (balloonAmount.intValue() < 0) {
@@ -39,9 +45,16 @@ public class AmortisationScheduleService {
                 loanCalculator.getMonthlyRepaymentAmountWithBalloon(financedAmount, rate, termInMonths, balloonAmount);
 
 
-        LoanAsset loanAsset = new LoanAsset(loanDTO.getCostAmount(),
-                loanDTO.getDepositAmount(),
-                loanDTO.getYearInterestRate(),
+//        LoanAsset loanAsset = new LoanAsset(loanDTO.getCostAmount(),
+//                loanDTO.getDepositAmount(),
+//                loanDTO.getYearInterestRate(),
+//                balloonAmount,
+//                termInMonths,
+//                calculatedMonthlyRepayment);
+
+        LoanAsset loanAsset = new LoanAsset(loanDTO.costAmount(),
+                loanDTO.depositAmount(),
+                loanDTO.yearInterestRate(),
                 balloonAmount,
                 termInMonths,
                 calculatedMonthlyRepayment);
@@ -67,7 +80,7 @@ public class AmortisationScheduleService {
         return assetListWithDueTotals;
     }
 
-    public RetrieveIndividualScheduleDto getIndividualSchedule(UUID assetID) {
+    public RetrieveIndividualScheduleDto getIndividualSchedule(Long assetID) {
 
        Optional<LoanAsset> matchedAsset = loanAssetRepository.findById(assetID);
        if (matchedAsset.isEmpty()) {

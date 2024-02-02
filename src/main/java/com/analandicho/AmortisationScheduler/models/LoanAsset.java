@@ -11,8 +11,8 @@ import java.util.UUID;
 @Entity
 public class LoanAsset {
     @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private BigDecimal costAmount;
 
@@ -37,7 +37,7 @@ public class LoanAsset {
     }
 
     public LoanAsset(BigDecimal costAmount, BigDecimal depositAmount, BigDecimal yearInterestRate, BigDecimal balloonAmount, int numberOfMonthlyPayments, BigDecimal calculatedRepaymentAmount) {
-        this.id = UUID.randomUUID();
+//        this.id = UUID.randomUUID();
         this.costAmount = costAmount;
         this.depositAmount = depositAmount;
         this.yearInterestRate = yearInterestRate;
@@ -46,11 +46,11 @@ public class LoanAsset {
         this.calculatedRepaymentAmount = calculatedRepaymentAmount;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

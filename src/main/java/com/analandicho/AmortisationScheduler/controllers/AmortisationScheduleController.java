@@ -40,7 +40,7 @@ public class AmortisationScheduleController {
 
     @GetMapping("/view/{assetId}")
     public ResponseEntity getIndividualAmortisationSchedule(
-            @PathVariable("assetId") UUID assetId
+            @PathVariable("assetId") Long assetId
     ) {
         try {
             return ResponseEntity
