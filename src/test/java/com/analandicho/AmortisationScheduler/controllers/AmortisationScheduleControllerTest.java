@@ -25,9 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AmortisationScheduleController.class)
 public class AmortisationScheduleControllerTest {
-
-    // MOCKMVC
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -82,17 +79,7 @@ public class AmortisationScheduleControllerTest {
 
     @Test // TODO: check.
     void viewAllEndpoint_shouldReturnArrayOfExistingSchedules() throws Exception {
-        List<PreviousSchedulesDto>  previousSchedulesDtoList = List.of(new PreviousSchedulesDto(
-                loanAssetId,
-                costAmount,
-                depositAmount,
-                yearInterestRate,
-                termInMonths,
-                balloonAmount,
-                calculatedRepayment,
-                totalPaymentDue,
-                totalInterestDue
-        ));
+        List<PreviousSchedulesDto>  previousSchedulesDtoList = List.of(getMockPreviousSchedulesDto());
 
 
         when(amortisationScheduleService.listGeneratedScheduleDetails()).thenReturn(previousSchedulesDtoList);
@@ -107,7 +94,6 @@ public class AmortisationScheduleControllerTest {
         String mockJsonResponse = objectWriter.writeValueAsString(previousSchedulesDtoList);
         assertEquals(mockJsonResponse, results.getResponse().getContentAsString());
 
-        System.out.println("Content" + results.getResponse().getContentLength()); // returns 0
     }
 
 
@@ -115,28 +101,9 @@ public class AmortisationScheduleControllerTest {
     void viewIndividualSched_shouldReturnEmpty() throws Exception {
 
         RetrieveIndividualScheduleDto mockDto = new RetrieveIndividualScheduleDto(
-                new PreviousSchedulesDto(
-                        loanAssetId,
-                        costAmount,
-                        depositAmount,
-                        yearInterestRate,
-                        termInMonths,
-                        balloonAmount,
-                        calculatedRepayment,
-                        totalPaymentDue,
-                        totalInterestDue
-                ),
-                List.of(
-                        new ScheduleDto(
-                                1,
-                                new BigDecimal("175"),
-                                new BigDecimal("115"),
-                                new BigDecimal("123"),
-                                new BigDecimal("1212")
-                        )
-                )
+               getMockPreviousSchedulesDto(),
+                List.of( getMockScheduleDto())
         );
-
 
 
         RetrieveIndividualScheduleDto func = amortisationScheduleService.getIndividualSchedule(loanAssetId);
@@ -191,4 +158,31 @@ public class AmortisationScheduleControllerTest {
         assertEquals(mockResponseInJson, results.getResponse().getContentAsString());
 
     }
+
+    private PreviousSchedulesDto getMockPreviousSchedulesDto() {
+        return new PreviousSchedulesDto(
+                loanAssetId,
+                costAmount,
+                depositAmount,
+                yearInterestRate,
+                termInMonths,
+                balloonAmount,
+                calculatedRepayment,
+                totalPaymentDue,
+                totalInterestDue
+        );
+    }
+
+
+    private ScheduleDto getMockScheduleDto() {
+        return   new ScheduleDto(
+                1,
+                new BigDecimal("175"),
+                new BigDecimal("115"),
+                new BigDecimal("123"),
+                new BigDecimal("1212")
+        );
+
+    }
+
 }

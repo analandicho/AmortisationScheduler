@@ -2,13 +2,14 @@ package com.analandicho.AmortisationScheduler.services;
 
 import com.analandicho.AmortisationScheduler.models.LoanAsset;
 import com.analandicho.AmortisationScheduler.models.Schedule;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-
+@Service
 public class LoanCalculator {
     public BigDecimal getMonthlyRepaymentAmountWithoutBalloon(BigDecimal financedAmount, BigDecimal rate, int termInMonths) {
         return financedAmount.multiply((rate.multiply(BigDecimal.ONE.add(rate).pow(termInMonths)))
@@ -45,13 +46,6 @@ public class LoanCalculator {
             BigDecimal principalPortionAmount = calculateSchedulePrincipal(calculatedMonthlyRepayment, interestPortionAmount);
             BigDecimal remainingBalance = calculateScheduledPaymentBalance(offsetBalance, principalPortionAmount);
 
-            // TODO: Ensure last period is equal to 0 for nonBallon / balloonAmount for balloon transactions.
-            // TODO: MUST ADJUST THE LAST PAYMENT AS THIS MAY BE LESS ??
-            //            if (calculatedMonthlyRepayment > offsetBalance) { // previousBalance
-
-            //
-            //            }
-
             offsetBalance = remainingBalance; // new remaining balance
 
             amortisationSchedule.add(new Schedule(
@@ -63,10 +57,6 @@ public class LoanCalculator {
                     loanAsset
             ));
         }
-
-        System.out.println("SIZE OF LIST: " + amortisationSchedule.size());
-
-
 
        return amortisationSchedule;
     }

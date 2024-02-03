@@ -10,6 +10,8 @@ public record LoanAssetRequest (
         BigDecimal balloonAmount
 
                                 ) {
+
+    // TODO:
 //    private BigDecimal costAmount;
 //
 //    private BigDecimal depositAmount;

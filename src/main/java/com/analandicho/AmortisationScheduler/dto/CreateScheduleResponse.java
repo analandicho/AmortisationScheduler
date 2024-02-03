@@ -1,7 +1,5 @@
 package com.analandicho.AmortisationScheduler.dto;
 
-import java.util.UUID;
-
 public class CreateScheduleResponse {
 
     private Long assetId;

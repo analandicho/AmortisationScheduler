@@ -42,14 +42,14 @@ public class AmortisationScheduleController {
     public ResponseEntity getIndividualAmortisationSchedule(
             @PathVariable("assetId") Long assetId
     ) {
-        try {
+//        try {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(amortisationScheduleService.getIndividualSchedule(assetId));
-        } catch (Exception e) {
-            e.printStackTrace(); // logging?
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//        }
 
 
     }

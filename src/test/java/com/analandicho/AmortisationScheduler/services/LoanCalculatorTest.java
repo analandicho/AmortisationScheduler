@@ -14,6 +14,8 @@ import  static org.junit.jupiter.api.Assertions.assertEquals;
 
 // MOCKS and STUBS
 
+// TODO:
+
 public class LoanCalculatorTest {
 
     BigDecimal financedAmount;

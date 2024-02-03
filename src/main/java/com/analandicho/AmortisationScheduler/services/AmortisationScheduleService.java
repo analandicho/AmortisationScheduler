@@ -1,6 +1,7 @@
 package com.analandicho.AmortisationScheduler.services;
 
 import com.analandicho.AmortisationScheduler.dto.*;
+import com.analandicho.AmortisationScheduler.exception.AssetScheduleNotFoundException;
 import com.analandicho.AmortisationScheduler.models.LoanAsset;
 import com.analandicho.AmortisationScheduler.models.Schedule;
 import com.analandicho.AmortisationScheduler.repositories.LoanAssetRepository;
@@ -20,9 +21,11 @@ public class AmortisationScheduleService {
     @Autowired
     ScheduleRepository scheduleRepository;
 
+    @Autowired
+    LoanCalculator loanCalculator;
+
 
     public CreateScheduleResponse createScheduleForLoan(LoanAssetRequest loanDTO) throws Exception {
-        LoanCalculator loanCalculator = new LoanCalculator();
 
 //        BigDecimal financedAmount = loanDTO.getCostAmount().subtract(loanDTO.getDepositAmount());
 //        BigDecimal rate = loanDTO.getYearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
@@ -66,8 +69,11 @@ public class AmortisationScheduleService {
         loanAsset.setSchedules(amortisationSchedule);
 
         // Save loan asset and amortisation schedules:
-        LoanAsset result = loanAssetRepository.save(loanAsset);
-        return new CreateScheduleResponse(result.getId());
+//        LoanAsset result = loanAssetRepository.save(loanAsset);
+//        return new CreateScheduleResponse(result.getId());
+
+        loanAsset = loanAssetRepository.save(loanAsset);
+        return new CreateScheduleResponse(loanAsset.getId());
 
     }
 
@@ -80,16 +86,16 @@ public class AmortisationScheduleService {
         return assetListWithDueTotals;
     }
 
-    public RetrieveIndividualScheduleDto getIndividualSchedule(Long assetID) {
+    public RetrieveIndividualScheduleDto getIndividualSchedule(Long assetID) throws AssetScheduleNotFoundException {
 
        Optional<LoanAsset> matchedAsset = loanAssetRepository.findById(assetID);
        if (matchedAsset.isEmpty()) {
-           throw new Error("Unable to find asset details for ID: " + assetID);
+           throw new AssetScheduleNotFoundException("Asset " + assetID + " is not found.");
        }
 
-       Totals totalsDue = scheduleRepository.getTotalsOfAssetSchedule(assetID); // Get SUMS. Any other way in Hibernate to do this?
+       Totals totalsDue = scheduleRepository.getTotalsOfAssetSchedule(assetID); // IMPROVEMENT?
        if (totalsDue==null) {
-           throw new Error("No amortisation schedule found for asset: " + assetID);
+           throw new AssetScheduleNotFoundException("No amortisation schedule created yet for asset: " + assetID);
        }
 
        LoanAsset asset = matchedAsset.get();

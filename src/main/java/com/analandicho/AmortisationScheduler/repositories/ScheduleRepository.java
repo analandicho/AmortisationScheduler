@@ -12,6 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+
+    /* get total interest due and total sum due from Schedule repo */
     @Query("SELECT new com.analandicho.AmortisationScheduler.dto.Totals(SUM(s.interest), SUM(s.payment)) FROM Schedule s WHERE s.loanAsset.id = :loanAssetId")
     Totals getTotalsOfAssetSchedule(@Param("loanAssetId") Long loanAssetId);
 }

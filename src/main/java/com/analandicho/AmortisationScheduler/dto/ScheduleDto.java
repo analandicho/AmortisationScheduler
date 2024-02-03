@@ -12,6 +12,8 @@ public record ScheduleDto(
 
 ) {
 
+    // TODO:
+
 //    private int period;
 //
 //    private BigDecimal payment;

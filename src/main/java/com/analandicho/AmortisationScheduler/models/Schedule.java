@@ -22,8 +22,7 @@ public class Schedule {
 
     private BigDecimal balance;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne
+    @ManyToOne // (fetch = FetchType.LAZY)
     @JoinColumn(name="LOAN_ASSET_ID")
     private LoanAsset loanAsset;
 
@@ -44,9 +43,9 @@ public class Schedule {
         return id;
     }
 
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getPeriod() {
         return period;
