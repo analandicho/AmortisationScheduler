@@ -13,13 +13,15 @@ REST API implementation for creating an amortisation schedule for an asset being
    - The contents of the list API for the schedule
    - The amortisation schedule that was prepared
 
+An embedded database (H2) is used for the purpose of this project.
+
 ### API
 
-| Resource | Input                                                                                       | Output                                                                                                                                                                                                                              | Desc  |
-|----------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|
-| `PUT /schedules/create`  | `costAmount`, `depositAmount`, `yearInterestRAte`,`numberOfMonthlyPayments`,`balloonAmount` | Creation confirmation obj                                                                                                                                                                                                           | desc1 |
-| `GET /schedules/view/all` | n/a                                                                                         | List of PreviousSchedulesDto with following fields: `loanAssetId`, `costAmount`, `depositAmount` `yearInterestRate`, `numberOfMonthlyPayments`, `balloonAmount`, `calculatedRepaymentAmount`, `totalInterestDue`, `totalPaymentDue` | desc2 |
-| `GET /schedules/view/{assetId}` | `assetId` as query string param                                                             | RetrieveIndividualScheduleDto object containing fields:    ` details` `amortisationSchedule`                                                                                                                                        | desc3 |
+| Resource | Input                                                                                       | Output                                                                                                                                                                                                                              | Desc                                                               |
+|----------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| `PUT /schedules/create`  | `costAmount`, `depositAmount`, `yearInterestRAte`,`numberOfMonthlyPayments`,`balloonAmount` | Creation confirmation obj                                                                                                                                                                                                           | Create an amortisation schedule given loan details                 |
+| `GET /schedules/view/all` | n/a                                                                                         | List of PreviousSchedulesDto with following fields: `loanAssetId`, `costAmount`, `depositAmount` `yearInterestRate`, `numberOfMonthlyPayments`, `balloonAmount`, `calculatedRepaymentAmount`, `totalInterestDue`, `totalPaymentDue` | List all previously created schedules from database                |
+| `GET /schedules/view/{assetId}` | `assetId` as query string param                                                             | RetrieveIndividualScheduleDto object containing fields:    ` details` `amortisationSchedule`                                                                                                                                        | Retrieve an individual asset details with its associated schedules |
 
 
 ## RUNNING THE APP
@@ -31,12 +33,75 @@ REST API implementation for creating an amortisation schedule for an asset being
 ./mvnw spring-boot:run
 ```
 
-## TESTS
+## DATABASE
+Access the database from `/h2-console` with credentials"
+- JDBC URL: jdbc:h2:mem:testdb
+- User Name: sa
+- Password: password
 
+## TESTS
 Tests can be found in: `src/test`
 
+## EXAMPLES (from Postman)
+1. Create a Schedule 
+    - REQUEST: `PUT http://localhost:8080/schedules/create` with request body:
+   ```shell 
+   {
+    "costAmount" : 25000,
+    "depositAmount" : 5000,
+    "yearInterestRate" : 7.5,
+    "numberOfMonthlyPayments": 12,
+    "balloonAmount": 0
+   }
+   ```
+
+    - RESPONSE
+   ```shell
+      {
+    "assetId": 1,
+    "statusMessage": "Schedule creation is successful"
+   }
+   ```
+   
+    - DB SNAPSHOT
+![img.png](src/main/resources/images/createdSchedImage.png)
 
 
+2. List all created sched:
+   - REQUEST: `GET http://localhost:8080/schedules/view/all`
+   - RESPONSE
+   ```shell
+   [
+    {
+        "loanAssetId": 1,
+        "costAmount": 25000.00,
+        "depositAmount": 5000.00,
+        "yearInterestRate": 7.50,
+        "numberOfMonthlyPayments": 12,
+        "balloonAmount": 0.00,
+        "calculatedRepaymentAmount": 1735.15,
+        "totalInterestDue": 821.79,
+        "totalPaymentDue": 20821.80
+    }
+   ]```
+   
+3. Retrieve Individual Schedule
+   - REQUEST: `GET http://localhost:8080/schedules/view/{{assetId}}` with `assetId=1`
+   - RESPONSE
+   ```shell
+   [
+    {
+        "loanAssetId": 1,
+        "costAmount": 25000.00,
+        "depositAmount": 5000.00,
+        "yearInterestRate": 7.50,
+        "numberOfMonthlyPayments": 12,
+        "balloonAmount": 0.00,
+        "calculatedRepaymentAmount": 1735.15,
+        "totalInterestDue": 821.79,
+        "totalPaymentDue": 20821.80
+    }
+   ]```
 
 
 ## Miscellaneous
@@ -54,7 +119,7 @@ Project initialised with https://start.spring.io/ using following configurations
 
 
 ### Development Platforms
-IDE: IntelliJ IDEA 2023.2 (Community Edition) Runtime version: 17.0.7+7-b1000.6 aarch64 VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
-OS: macOS 14.1.1
+- IDE: IntelliJ IDEA 2023.2 (Community Edition) Runtime version: 17.0.7+7-b1000.6 aarch64 VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
+- OS: macOS 14.2.1
 
-  
+  ![img.png](src/main/resources/images/loanAssetTableImg.png)
