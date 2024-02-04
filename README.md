@@ -34,7 +34,7 @@ An embedded database (H2) is used for the purpose of this project.
 ```
 
 ## DATABASE
-Access the database from `/h2-console` with credentials"
+Access the database from `/h2-console` with credentials:
 - JDBC URL: jdbc:h2:mem:testdb
 - User Name: sa
 - Password: password
@@ -64,7 +64,8 @@ Tests can be found in: `src/test`
    ```
    
     - DB SNAPSHOT
-![img.png](src/main/resources/images/createdSchedImage.png)
+      - ![img.png](src/main/resources/images/loanAssetTableImg.png)
+      - ![img.png](src/main/resources/images/createdSchedImage.png)
 
 
 2. List all created sched:
@@ -122,4 +123,3 @@ Project initialised with https://start.spring.io/ using following configurations
 - IDE: IntelliJ IDEA 2023.2 (Community Edition) Runtime version: 17.0.7+7-b1000.6 aarch64 VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
 - OS: macOS 14.2.1
 
-  ![img.png](src/main/resources/images/loanAssetTableImg.png)
