@@ -33,7 +33,6 @@ public class LoanCalculator {
     }
 
     public BigDecimal calculateScheduledPaymentBalance(BigDecimal previousBalance, BigDecimal principalPayment) {
-        // Previous Balance - Principal Amount TODO: Check this calculation is correct
         return previousBalance.subtract(principalPayment);
     }
 

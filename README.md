@@ -21,7 +21,7 @@ An embedded database (H2) is used for the purpose of this project.
 |----------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
 | `PUT /schedules/create`  | request body with fields:<br/> `costAmount`,<br/> `depositAmount`,<br/> `yearInterestRAte`,<br/>`numberOfMonthlyPayments`,<br/>`balloonAmount` | Confirmation of asset/schedule creation with asset ID.                                                                                                                                                                                                        | Create an amortisation schedule given loan details / amounts       |
 | `GET /schedules/view/all` | n/a                                                                                                                                            | List of PreviousSchedulesDto with following fields: <br/>`loanAssetId`, <br/>`costAmount`, <br/>`depositAmount`,<br/> `yearInterestRate`, `numberOfMonthlyPayments`, `balloonAmount`, `calculatedRepaymentAmount`, `totalInterestDue`, <br/>`totalPaymentDue` | List all previously created schedules from database                |
-| `GET /schedules/view/{assetId}` | `assetId` as query parameter string                                                                                                            | RetrieveIndividualScheduleDto object containing fields:    ` details`,<br/>`amortisationSchedule`                                                                                                                                                                  | Retrieve an individual asset details with its associated schedules |
+| `GET /schedules/view/{assetId}` | `assetId` as query parameter string                                                                                                            | RetrieveIndividualScheduleDto object containing fields:<br/> ` details`,<br/>`amortisationSchedule`                                                                                                                                                           | Retrieve an individual asset details with its associated schedules |
 
 
 ## RUNNING THE APP
@@ -84,7 +84,8 @@ Tests can be found in: `src/test`
         "totalInterestDue": 821.79,
         "totalPaymentDue": 20821.80
     }
-   ]```
+   ]
+   ```
    
 3. Retrieve Individual Schedule
    - REQUEST: `GET http://localhost:8080/schedules/view/{{assetId}}` with `assetId=1`
@@ -102,7 +103,8 @@ Tests can be found in: `src/test`
         "totalInterestDue": 821.79,
         "totalPaymentDue": 20821.80
     }
-   ]```
+   ]
+   ```
 
 
 ## Miscellaneous
