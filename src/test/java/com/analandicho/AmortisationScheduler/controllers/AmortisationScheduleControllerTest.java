@@ -14,13 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AmortisationScheduleController.class)
@@ -60,71 +63,6 @@ public class AmortisationScheduleControllerTest {
     }
 
     @Test
-    void viewAllEndpoint_shouldReturnEmptyArrayWhenEmpty() throws Exception {
-        List<PreviousSchedulesDto>  previousSchedulesDtoList = List.of(new PreviousSchedulesDto());
-
-        when(amortisationScheduleService.listGeneratedScheduleDetails()).thenReturn(previousSchedulesDtoList);
-
-        MvcResult results = this.mockMvc.perform(get("/schedules/view/all")).andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        ObjectWriter objectWriter = new ObjectMapper().writer();
-
-        String mockJsonResponse = objectWriter.writeValueAsString(previousSchedulesDtoList);
-        assertEquals(mockJsonResponse, results.getResponse().getContentAsString());
-    }
-
-
-    @Test // TODO: check.
-    void viewAllEndpoint_shouldReturnArrayOfExistingSchedules() throws Exception {
-        List<PreviousSchedulesDto>  previousSchedulesDtoList = List.of(getMockPreviousSchedulesDto());
-
-
-        when(amortisationScheduleService.listGeneratedScheduleDetails()).thenReturn(previousSchedulesDtoList);
-
-        MvcResult results = this.mockMvc.perform(get("/schedules/view/all")).andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        ObjectWriter objectWriter = new ObjectMapper().writer();
-
-        String mockJsonResponse = objectWriter.writeValueAsString(previousSchedulesDtoList);
-        assertEquals(mockJsonResponse, results.getResponse().getContentAsString());
-
-    }
-
-
-    @Test
-    void viewIndividualSched_shouldReturnEmpty() throws Exception {
-
-        RetrieveIndividualScheduleDto mockDto = new RetrieveIndividualScheduleDto(
-               getMockPreviousSchedulesDto(),
-                List.of( getMockScheduleDto())
-        );
-
-
-        RetrieveIndividualScheduleDto func = amortisationScheduleService.getIndividualSchedule(loanAssetId);
-
-        when(func).thenReturn(mockDto);
-
-
-        MvcResult results = this.mockMvc.perform(get("/schedules/view/{assetId}", loanAssetId)).andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        ObjectWriter objectWriter = new ObjectMapper().writer();
-
-        String mockJsonResponse = objectWriter.writeValueAsString(mockDto);
-        assertEquals(mockJsonResponse, results.getResponse().getContentAsString());
-
-
-    }
-
-    @Test
     void createSchedule() throws Exception {
         CreateScheduleResponse mockResponse = new CreateScheduleResponse(loanAssetId);
 
@@ -143,21 +81,67 @@ public class AmortisationScheduleControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(loanAssetDto);
 
-        MvcResult results = this.mockMvc.perform(put("/schedules/create")
+        this.mockMvc.perform(put("/schedules/create")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(requestJson)
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.assetId").value(loanAssetId))
+                .andExpect(jsonPath("$.statusMessage").value("Schedule creation is successful"))
+                .andReturn();
+    }
+
+    @Test
+    void viewAllEndpoint_shouldReturnEmptyArrayWhenEmpty() throws Exception {
+        List<PreviousSchedulesDto>  previousSchedulesDtoList = Collections.emptyList();
+
+        when(amortisationScheduleService.listGeneratedScheduleDetails()).thenReturn(previousSchedulesDtoList);
+
+        this.mockMvc.perform(get("/schedules/view/all")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.*").isEmpty());
+    }
+
+
+    @Test
+    void viewAllEndpoint_shouldReturnArrayOfExistingSchedules() throws Exception {
+        List<PreviousSchedulesDto> previousSchedulesDtoList = List.of(getMockPreviousSchedulesDto());
+
+
+        when(amortisationScheduleService.listGeneratedScheduleDetails()).thenReturn(previousSchedulesDtoList);
+
+        this.mockMvc.perform(get("/schedules/view/all")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.*").isNotEmpty())
+                .andExpect(jsonPath("$[0].loanAssetId").value(loanAssetId))
+                .andExpect(jsonPath("$[0].balloonAmount").value(balloonAmount));
+    }
+
+
+    @Test
+    void viewIndividualSchedule_shouldReturnMatchingSchedule() throws Exception {
+
+        RetrieveIndividualScheduleDto mockDto = new RetrieveIndividualScheduleDto(
+               getMockPreviousSchedulesDto(),
+                List.of(getMockScheduleDto())
+        );
+
+        when(amortisationScheduleService.getIndividualSchedule(loanAssetId)).thenReturn(mockDto);
+
+
+        this.mockMvc.perform(get("/schedules/view/{assetId}", loanAssetId)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.details.loanAssetId").value(loanAssetId))
+                .andExpect(jsonPath("$.amortisationSchedule").isArray())
+                .andExpect(jsonPath("$.amortisationSchedule", hasSize(1)))
                 .andReturn();
 
-
-        ObjectWriter objectWriter = new ObjectMapper().writer();
-
-        String mockResponseInJson = objectWriter.writeValueAsString(mockResponse);
-        assertEquals(mockResponseInJson, results.getResponse().getContentAsString());
-
     }
+
+
 
     private PreviousSchedulesDto getMockPreviousSchedulesDto() {
         return new PreviousSchedulesDto(

@@ -2,6 +2,7 @@ package com.analandicho.AmortisationScheduler.services;
 
 import com.analandicho.AmortisationScheduler.dto.*;
 import com.analandicho.AmortisationScheduler.exception.AssetScheduleNotFoundException;
+import com.analandicho.AmortisationScheduler.exception.InvalidInputException;
 import com.analandicho.AmortisationScheduler.models.LoanAsset;
 import com.analandicho.AmortisationScheduler.models.Schedule;
 import com.analandicho.AmortisationScheduler.repositories.LoanAssetRepository;
@@ -27,33 +28,20 @@ public class AmortisationScheduleService {
 
     public CreateScheduleResponse createScheduleForLoan(LoanAssetRequest loanDTO) throws Exception {
 
-//        BigDecimal financedAmount = loanDTO.getCostAmount().subtract(loanDTO.getDepositAmount());
-//        BigDecimal rate = loanDTO.getYearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
-//        int termInMonths = loanDTO.getNumberOfMonthlyPayments();
-//        BigDecimal balloonAmount = loanDTO.getBalloonAmount();
-
+        if (loanDTO.costAmount().intValue() < 0 || loanDTO.depositAmount().intValue() < 0 || loanDTO.balloonAmount().intValue() < 0) {
+            throw new InvalidInputException("Invalid input: Amount value supplied is less than 0");
+        }
         BigDecimal financedAmount = loanDTO.costAmount().subtract(loanDTO.depositAmount());
         BigDecimal rate = loanDTO.yearInterestRate().divide(new BigDecimal("1200"), 6, RoundingMode.HALF_EVEN);
         int termInMonths = loanDTO.numberOfMonthlyPayments();
         BigDecimal balloonAmount = loanDTO.balloonAmount();
 
-        // TODO: check for values; Do we also check if Loan Asset Amount is 0 ???
-        if (balloonAmount.intValue() < 0) {
-            throw new Exception("Balloon Amount cannot be 0");
-        }
 
         // Calculate Monthly Repayment:
         BigDecimal calculatedMonthlyRepayment = balloonAmount.equals(BigDecimal.ZERO) ?
                 loanCalculator.getMonthlyRepaymentAmountWithoutBalloon(financedAmount, rate, termInMonths) :
                 loanCalculator.getMonthlyRepaymentAmountWithBalloon(financedAmount, rate, termInMonths, balloonAmount);
 
-
-//        LoanAsset loanAsset = new LoanAsset(loanDTO.getCostAmount(),
-//                loanDTO.getDepositAmount(),
-//                loanDTO.getYearInterestRate(),
-//                balloonAmount,
-//                termInMonths,
-//                calculatedMonthlyRepayment);
 
         LoanAsset loanAsset = new LoanAsset(loanDTO.costAmount(),
                 loanDTO.depositAmount(),
@@ -68,12 +56,8 @@ public class AmortisationScheduleService {
         // Link schedules to Asset
         loanAsset.setSchedules(amortisationSchedule);
 
-        // Save loan asset and amortisation schedules:
-//        LoanAsset result = loanAssetRepository.save(loanAsset);
-//        return new CreateScheduleResponse(result.getId());
-
-        loanAsset = loanAssetRepository.save(loanAsset);
-        return new CreateScheduleResponse(loanAsset.getId());
+        LoanAsset result = loanAssetRepository.save(loanAsset);
+        return new CreateScheduleResponse(result.getId());
 
     }
 

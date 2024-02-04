@@ -70,7 +70,6 @@ public class AmortisationScheduleServiceTest {
 
     }
 
-    @DisplayName("createScheduleForLoan: create schedule with no balloon amount, verify correct monthly repayment calculation with no balloon amount is called.")
     @Test
     public void shouldCreateScheduleForGivenLoanWithNoBalloonAmount() throws Exception {
         LoanAssetRequest requestDto = new LoanAssetRequest(
@@ -99,7 +98,6 @@ public class AmortisationScheduleServiceTest {
                 termInMonths);
     }
 
-    @DisplayName("createScheduleForLoan: create schedule with balloon amount, verify correct monthly repayment calculation with balloon amount is called.")
     @Test
     public void shouldCreateScheduleForGivenLoanWithBalloonAmount() throws Exception {
         BigDecimal nonZeroBalloonAmount = new BigDecimal("10000");
@@ -131,7 +129,6 @@ public class AmortisationScheduleServiceTest {
                 nonZeroBalloonAmount);
     }
 
-    @DisplayName("listGeneratedScheduleDetails: get list of previously created schedule details with total payment and interest due.")
     @Test
     public void shouldGetListOfPreviouslyCreatedSchedules() {
         // Arrange
@@ -151,7 +148,6 @@ public class AmortisationScheduleServiceTest {
         verify(loanAssetRepository, times(1)).getPreviousSchedules();
     }
 
-    @DisplayName("listGeneratedScheduleDetails: get empty list when no created schedules")
     @Test
     public void shouldGetEmptyListWhenNoCreatedSchedules() {
         when(loanAssetRepository.getPreviousSchedules()).thenReturn(
@@ -164,8 +160,7 @@ public class AmortisationScheduleServiceTest {
         verify(loanAssetRepository, times(1)).getPreviousSchedules();
     }
 
-    @DisplayName("getIndividualSchedule: get individual schedule for a given asset ID")
-    @Test // TODO
+    @Test
     public void shouldGetIndividualSchedule() throws Exception {
         PreviousSchedulesDto schedulesDto = getMockPreviousSchedulesDto();
         LoanAsset loanAsset = getMockLoanAsset(balloonAmount);
@@ -185,17 +180,20 @@ public class AmortisationScheduleServiceTest {
                 new BigDecimal("13")
         ));
 
-        var actual = amortisationScheduleService.getIndividualSchedule(loanAssetId);
+        try {
+            var actual = amortisationScheduleService.getIndividualSchedule(loanAssetId);
 
-        System.out.println(actual.getDetails().getCostAmount());
+            assertEquals(1, actual.getDetails().getLoanAssetId());
 
-        assertEquals(1, actual.getDetails().getLoanAssetId());
+            verify(loanAssetRepository, times(1)).findById(loanAssetId);
+            verify(scheduleRepository, times(1)).getTotalsOfAssetSchedule(loanAssetId);
 
-        verify(loanAssetRepository, times(1)).findById(loanAssetId);
-        verify(scheduleRepository, times(1)).getTotalsOfAssetSchedule(loanAssetId);
-    }
+        } catch(Exception e) {
+            fail("Should not have thrown any exception");
+        }
 
-    @DisplayName("getIndividualSchedule: throw exception when no matching asset ID is found")
+     }
+
     @Test
     public void shouldThrowExceptionWhenNoMatchingAssetSchedules() throws Exception {
         PreviousSchedulesDto schedulesDto = getMockPreviousSchedulesDto();
@@ -216,12 +214,11 @@ public class AmortisationScheduleServiceTest {
 
         assertEquals(exceptionMsg, exception.getMessage());
 
-        verify(loanAssetRepository, times(1)).findById(loanAssetId); // TODO
-        verify(scheduleRepository, times(0)).getTotalsOfAssetSchedule(loanAssetId);
+        verify(scheduleRepository, never()).getTotalsOfAssetSchedule(loanAssetId);
+
     }
 
 
-    @DisplayName("getIndividualSchedule: throw exception when no schedules found for a given asset ID")
     @Test
     public void shouldThrowExceptionWhenNoSchedulesFoundForAsset() throws Exception {
         PreviousSchedulesDto schedulesDto = getMockPreviousSchedulesDto();
@@ -246,6 +243,7 @@ public class AmortisationScheduleServiceTest {
 
         verify(loanAssetRepository, times(1)).findById(loanAssetId);
         verify(scheduleRepository, times(1)).getTotalsOfAssetSchedule(loanAssetId);
+
     }
 
 

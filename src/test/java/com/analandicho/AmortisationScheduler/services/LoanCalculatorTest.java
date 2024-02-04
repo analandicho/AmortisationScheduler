@@ -12,8 +12,6 @@ import java.util.List;
 import  static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-// MOCKS and STUBS
-
 // TODO:
 
 public class LoanCalculatorTest {
@@ -34,7 +32,7 @@ public class LoanCalculatorTest {
         balloonAmount = new BigDecimal("10000");
     }
 
-    @Test
+    @Test // TODO: FAILING
     void createAmortisationSchedule_testWithOutBalloon() { // without Balloon
         BigDecimal assetCost = new BigDecimal("25000");
         BigDecimal deposit = new BigDecimal("5000");
@@ -66,7 +64,7 @@ public class LoanCalculatorTest {
     }
 
 
-    @Test
+    @Test // FAILING
     void createAmortisationSchedule_testWithBalloon() { // without Balloon
         BigDecimal assetCost = new BigDecimal("25000");
         BigDecimal deposit = new BigDecimal("5000");
